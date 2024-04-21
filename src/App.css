@@ -57,3 +57,7 @@ li > h1 {
   font-size: larger;
   color: white;
 }
+
+input[type="button"] {
+  cursor: pointer;
+}
