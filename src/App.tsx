@@ -15,7 +15,7 @@ export const App: React.FC = () => {
   const results = params.get("results") ?? "1";
 
   useEffect(() => {
-    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}&inc=name,picture,id`)
+    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}&inc=name,picture`)
       .then(response => response.json() as Promise<ApiResponse>)
       .then(data => {
         if (data.info.page === Number(page)) {
@@ -45,7 +45,7 @@ export const App: React.FC = () => {
       </form>
       <ul>
         {users.map(user => (
-          <li key={`${user.id.name}-${user.id.value}`}>
+          <li key={`${user.name.title}-${user.name.first}-${user.name.last}`}>
             <img src={user.picture.large} alt="Profile" width={50} />
             <h1>{`${user.name.title} ${user.name.first} ${user.name.last}`}</h1>
           </li> 
