@@ -1,31 +1,54 @@
 import React, { useEffect, useRef, useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { ApiResponse, User } from './types';
+import { ApiResponse, Entry, Header } from './types';
 import { useParams } from './hooks/useParams';
 import { goTo } from './functions/goTo';
 import { getParams } from './functions/getParams';
+import { mapUserToEntry } from './functions/mapUserToEntry';
 
 export const App: React.FC = () => {
   const [seed, setSeed] = useState<string>();
-  const [users, setUsers] = useState<User[]>();
+  const [entries, setEntries] = useState<Entry[]>();
   const params = useParams();
+  const [sortBy, setSortBy] = useState<typeof HEADERS[number]["key"]>();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "default">();
 
   const page = params.get("page") ?? "1";
   const results = params.get("results") ?? "1";
 
   useEffect(() => {
-    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}&inc=name,picture`)
+    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}&inc=name,picture,location`)
       .then(response => response.json() as Promise<ApiResponse>)
       .then(data => {
         if (data.info.page === Number(page)) {
-          setUsers(data.results);
+          setEntries(data.results.map(mapUserToEntry));
           setSeed(data.info.seed);
         }
       });
   }, [page, results]);
 
-  if (!users?.length) return null;
+  if (!entries?.length) return null;
+
+  const onClickHeader = (key: typeof HEADERS[number]["key"]) => {
+    if (sortBy === key) {
+      setSortOrder(sortOrder === "asc" ? "desc" : sortOrder === "desc" ? "default" : "asc");
+    } else {
+      setSortBy(key);
+      setSortOrder("asc");
+    }
+  }
+
+  const getEntries = () => {
+    if (!sortBy || sortOrder === "default") return entries;
+
+    return entries.slice().sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a[sortBy] > b[sortBy] ? 1 : -1;
+      } else {
+        return a[sortBy] < b[sortBy] ? 1 : -1;
+      }
+    });
+  }
 
   return (
     <div className="container">
@@ -43,14 +66,30 @@ export const App: React.FC = () => {
           </div>
         </label>
       </form>
-      <ul>
-        {users.map(user => (
-          <li key={`${user.name.title}-${user.name.first}-${user.name.last}`}>
-            <img src={user.picture.large} alt="Profile" width={50} />
-            <h1>{`${user.name.title} ${user.name.first} ${user.name.last}`}</h1>
-          </li> 
-        ))}
-      </ul>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              {HEADERS.map(header => (
+                <th key={header.key}>
+                  <button onClick={() => onClickHeader(header.key)}>{header.label}</button>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {getEntries().map(entry => (
+              <tr key={entry.key}>
+                {HEADERS.map(({ key }) => key === 'picture_thumbnail' ? (
+                  <td key={key}><img src={entry[key]} alt="Profile" width={50} /></td>
+                ) : (
+                  <td key={key}>{entry[key]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -80,3 +119,18 @@ const updatePage = ({ page, results }: { page?: number, results?: string }) => {
 
   goTo(`/?${params.toString()}`);
 }
+
+const HEADERS: Header[] = [
+  { key: 'picture_thumbnail', label: 'Picture' },
+  { key: 'name_first', label: 'Name' },
+  { key: 'location_city', label: 'City' },
+  { key: 'location_state', label: 'State' },
+  { key: 'location_country', label: 'Country' },
+  { key: 'location_postcode', label: 'Postcode' },
+  { key: 'street_number', label: 'Street Number' },
+  { key: 'street_name', label: 'Street Name' },
+  { key: 'coordinates_latitude', label: 'Latitude' },
+  { key: 'coordinates_longitude', label: 'Longitude' },
+  { key: 'timezone_offset', label: 'Timezone Offset' },
+  { key: 'timezone_description', label: 'Timezone Description' },
+];
