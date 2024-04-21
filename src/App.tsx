@@ -19,14 +19,20 @@ export const App: React.FC = () => {
   const results = params.get("results") ?? "1";
 
   useEffect(() => {
-    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}&inc=name,picture,location`)
+    const controller = new AbortController();
+
+    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}&inc=name,picture,location`, {
+      signal: controller.signal,
+    })
       .then(response => response.json() as Promise<ApiResponse>)
       .then(data => {
         if (data.info.page === Number(page)) {
           setEntries(data.results.map(mapUserToEntry));
           setSeed(data.info.seed);
         }
-      });
+      }).catch(console.error);
+
+    return () => controller.abort();
   }, [page, results]);
 
   if (!entries?.length) return null;
