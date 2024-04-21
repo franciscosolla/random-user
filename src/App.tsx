@@ -13,6 +13,7 @@ export const App: React.FC = () => {
   const [sortBy, setSortBy] = useState<typeof HEADERS[number]["key"]>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "default">();
   const [filter, setFilter] = useState<string>();
+  const [isFilterFoccused, setIsFilterFoccused] = useState<boolean>(false);
 
   const page = params.get("page") ?? "1";
   const results = params.get("results") ?? "1";
@@ -39,11 +40,16 @@ export const App: React.FC = () => {
     }
   }
 
+  const filterValue = (value: Entry[keyof Entry]) => {
+    if (!filter) return true;
+    return typeof value === "string" ? value.toLowerCase().includes(filter.toLowerCase()) : value === Number(filter)
+  }
+
   const getEntries = () => {
     let filteredEntries = entries;
 
     if (filter) {
-      filteredEntries = filteredEntries.filter(entry => Object.values(entry).some((value: Entry[keyof Entry]) => typeof value === "string" ? value.toLowerCase().includes(filter.toLowerCase()) : value === Number(filter)))
+      filteredEntries = filteredEntries.filter(entry => Object.values(entry).some(filterValue))
     }
 
     if (!sortBy || sortOrder === "default") return filteredEntries;
@@ -57,16 +63,37 @@ export const App: React.FC = () => {
     });
   }
 
+  const getAutocompleteValues = (): Entry[keyof Entry][] => {
+    return Array.from(new Set(getEntries().flatMap(entry => Object.values(entry).filter(filterValue))).values());
+  }
+
   return (
     <div className="container">
       <form>
         <label>
           Results
-          <input type="number" min={1} max={50} defaultValue={results} onChange={e => updatePage({ results: e.target.value })} />
+          <span>
+            {getEntries().length}{" / "}
+            <input type="number" min={1} max={50} defaultValue={results} onChange={e => updatePage({ results: e.target.value })} />
+          </span>
         </label>
-        <label>
+        <label onBlur={() => setIsFilterFoccused(false)}>
           Filter
-          <input type="text" onChange={e => setFilter(e.target.value)} />
+          <input
+            type="text"
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+            onFocus={() => setIsFilterFoccused(true)}
+          />
+          {isFilterFoccused && filter?.length && filter.length > 2 && getAutocompleteValues().length ? (
+            <ul>
+              {getAutocompleteValues().map(value => (
+                <li key={value} onMouseDown={() => setFilter(String(value))}>
+                  {value}
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </label>
         <label>
           Page
