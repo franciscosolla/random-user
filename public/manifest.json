@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Random User Generator",
+  "name": "Solla - Random User Generator",
   "icons": [
     {
       "src": "favicon.ico",
