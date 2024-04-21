@@ -12,6 +12,7 @@ export const App: React.FC = () => {
   const params = useParams();
   const [sortBy, setSortBy] = useState<typeof HEADERS[number]["key"]>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "default">();
+  const [filter, setFilter] = useState<string>();
 
   const page = params.get("page") ?? "1";
   const results = params.get("results") ?? "1";
@@ -39,9 +40,15 @@ export const App: React.FC = () => {
   }
 
   const getEntries = () => {
-    if (!sortBy || sortOrder === "default") return entries;
+    let filteredEntries = entries;
 
-    return entries.slice().sort((a, b) => {
+    if (filter) {
+      filteredEntries = filteredEntries.filter(entry => Object.values(entry).some((value: Entry[keyof Entry]) => typeof value === "string" ? value.toLowerCase().includes(filter.toLowerCase()) : value === Number(filter)))
+    }
+
+    if (!sortBy || sortOrder === "default") return filteredEntries;
+
+    return filteredEntries.slice().sort((a, b) => {
       if (sortOrder === "asc") {
         return a[sortBy] > b[sortBy] ? 1 : -1;
       } else {
@@ -56,6 +63,10 @@ export const App: React.FC = () => {
         <label>
           Results
           <input type="number" min={1} max={50} defaultValue={results} onChange={e => updatePage({ results: e.target.value })} />
+        </label>
+        <label>
+          Filter
+          <input type="text" onChange={e => setFilter(e.target.value)} />
         </label>
         <label>
           Page
