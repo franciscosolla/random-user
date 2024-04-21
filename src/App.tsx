@@ -8,36 +8,49 @@ import { getParams } from './functions/getParams';
 
 export const App: React.FC = () => {
   const [seed, setSeed] = useState<string>();
-  const [user, setUser] = useState<User>();
+  const [users, setUsers] = useState<User[]>();
   const params = useParams();
 
   const page = params.get("page") ?? "1";
   const results = params.get("results") ?? "1";
 
   useEffect(() => {
-    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}`)
+    fetch(`https://randomuser.me/api?page=${page}&results=${results}${seed ? `&seed=${seed}` : ""}&inc=name,picture,id`)
       .then(response => response.json() as Promise<ApiResponse>)
       .then(data => {
         if (data.info.page === Number(page)) {
-          setUser(data.results[0]);
+          setUsers(data.results);
           setSeed(data.info.seed);
         }
       });
   }, [page, results]);
 
-  if (!user) return null;
+  if (!users?.length) return null;
 
   return (
-    <div>
-      <div>
-        <img src={user.picture.large} alt="Profile" />
-        <h1>{`${user.name.title} ${user.name.first} ${user.name.last}`}</h1>
-      </div>
+    <div className="container">
       <form>
-        <input type="button" value="<" onClick={goToPreviousPage} />
-        <span>{page}</span>
-        <input type="button" value=">" onClick={goToNextPage} />
+        <label>
+          Results
+          <input type="number" min={1} max={50} defaultValue={results} onChange={e => updatePage({ results: e.target.value })} />
+        </label>
+        <label>
+          Page
+          <div>
+            <input type="button" value="<" onClick={goToPreviousPage} />
+            <input className="page-input" type="number" min={1} value={page} onChange={e => updatePage({ page: Number(e.target.value) })} />
+            <input type="button" value=">" onClick={goToNextPage} />
+          </div>
+        </label>
       </form>
+      <ul>
+        {users.map(user => (
+          <li key={`${user.id.name}-${user.id.value}`}>
+            <img src={user.picture.large} alt="Profile" width={50} />
+            <h1>{`${user.name.title} ${user.name.first} ${user.name.last}`}</h1>
+          </li> 
+        ))}
+      </ul>
     </div>
   );
 }
@@ -48,8 +61,22 @@ const goToPreviousPage = () =>  {
   const page = getPage();
 
   if (page > 1) {
-    goTo(`/?page=${page - 1}`);
+    updatePage({ page: page - 1 });
   }
 }
 
-const goToNextPage = () => goTo(`/?page=${getPage() + 1}`);
+const goToNextPage = () => updatePage({ page: getPage() + 1 });
+
+const updatePage = ({ page, results }: { page?: number, results?: string }) => {
+  const params = getParams();
+
+  if (page) {
+    params.set("page", String(page));
+  }
+
+  if (results) {
+    params.set("results", results);
+  }
+
+  goTo(`/?${params.toString()}`);
+}
