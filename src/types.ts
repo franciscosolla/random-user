@@ -1,5 +1,5 @@
-export interface Welcome10 {
-  results: Result[];
+export interface ApiResponse {
+  results: User[];
   info:    Info;
 }
 
@@ -10,7 +10,7 @@ export interface Info {
   version: string;
 }
 
-export interface Result {
+export interface User {
   gender:     string;
   name:       Name;
   location:   Location;
