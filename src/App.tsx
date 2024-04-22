@@ -5,6 +5,8 @@ import { useParams } from './hooks/useParams';
 import { goTo } from './functions/goTo';
 import { getParams } from './functions/getParams';
 import { mapUserToEntry } from './functions/mapUserToEntry';
+import { HEADERS } from './constants/headers';
+import { updatePage } from './functions/updatePage';
 
 export const App: React.FC = () => {
   const [seed, setSeed] = useState<string>();
@@ -150,31 +152,4 @@ const goToPreviousPage = () =>  {
 
 const goToNextPage = () => updatePage({ page: getPage() + 1 });
 
-const updatePage = ({ page, results }: { page?: number, results?: string }) => {
-  const params = getParams();
 
-  if (page) {
-    params.set("page", String(page));
-  }
-
-  if (results) {
-    params.set("results", results);
-  }
-
-  goTo(`/?${params.toString()}`);
-}
-
-const HEADERS: Header[] = [
-  { key: 'picture_thumbnail', label: 'Picture' },
-  { key: 'name_first', label: 'Name' },
-  { key: 'location_city', label: 'City' },
-  { key: 'location_state', label: 'State' },
-  { key: 'location_country', label: 'Country' },
-  { key: 'location_postcode', label: 'Postcode' },
-  { key: 'street_number', label: 'Street Number' },
-  { key: 'street_name', label: 'Street Name' },
-  { key: 'coordinates_latitude', label: 'Latitude' },
-  { key: 'coordinates_longitude', label: 'Longitude' },
-  { key: 'timezone_offset', label: 'Timezone Offset' },
-  { key: 'timezone_description', label: 'Timezone Description' },
-];
