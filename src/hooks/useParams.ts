@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { getParams } from "../functions/getParams";
 
 export const useParams = () => {
-  const [params, setParams] = useState(getParams());
+  return useSyncExternalStore(subscribe, getParams);
+}
 
-  useEffect(() => {
-    const handlePopState = () => setParams(getParams());
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  return params;
+const subscribe = (onChange: () => void) => {
+  window.addEventListener("popstate", onChange);
+  return () => window.removeEventListener("popstate", onChange);
 }
