@@ -1,0 +1,129 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 50px 0;
+  max-width: 100%;
+  width: fit-content;
+}
+
+form {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 50px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label > div {
+  display: flex;
+  gap: 5px;
+}
+
+.page-input {
+  max-width: 50px;
+}
+
+input[type="number"] {
+  text-align: center;
+}
+
+input[type="button"] {
+  cursor: pointer;
+}
+
+.table-container {
+  overflow-x: scroll;
+  width: 100%;
+  padding: 0 50px;
+  scrollbar-width: 0;
+  scrollbar-color: transparent transparent;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  white-space: nowrap;
+  padding: 5px;
+  border: 1px solid lightgray;
+  border-top: 0;
+  border-bottom: 0;
+  border-style: dashed;
+  text-align: center;
+}
+
+th {
+  padding: 0;
+}
+
+tr {
+  border: 1px solid gray;
+}
+
+td > img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+col:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+th > button {
+  cursor: pointer;
+  background-color: transparent;
+  font-weight: bold;
+  font-size:medium;
+  border: 0;
+  padding: 5px 15px;
+  width: 100%;
+}
+
+tr:hover {
+  background-color: lightgray;
+}
+
+form > label > ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 0  0 10px 10px;
+  font-size: medium;
+}
+
+form > label > ul > li {
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 2px 6px 2px;
+}
+
+form > label > ul > li:first-of-type {
+  padding: 4px 6px 2px;
+}
+
+form > label > ul > li:last-of-type {
+  padding: 2px 6px 4px;
+  border-radius: 0  0 10px 10px;
+}
+
+form > label > ul > li:hover {
+  background-color: lightgray;
+}
+
+form > label {
+  position: relative;
+}

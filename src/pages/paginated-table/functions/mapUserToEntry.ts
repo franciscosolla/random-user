@@ -1,4 +1,5 @@
-import { Entry, User } from "../types";
+import { User } from "../../../shared/types/RandomUserApi";
+import { Entry } from "../types";
 
 export const mapUserToEntry = (user: User): Entry => ({
   key: `${user.name.title}-${user.name.first}-${user.name.last}`,

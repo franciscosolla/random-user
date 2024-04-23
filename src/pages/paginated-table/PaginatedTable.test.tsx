@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
-import { App } from './App';
+import { PaginatedTable } from './PaginatedTable';
 
 const fetch = jest.fn()
 global.fetch = fetch;
@@ -34,7 +34,7 @@ describe('App', () => {
       })
     );
 
-    render(<App />);
+    render(<PaginatedTable />);
 
     // Use waitFor to handle asynchronous updates
     await waitFor(() => {
