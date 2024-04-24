@@ -2,7 +2,8 @@ import React from 'react';
 import './App.css';
 import { usePath } from './shared/hooks/usePath';
 import { PaginatedTable } from './pages/paginated-table/PaginatedTable';
-import { InfiniteScroll } from './pages/infinite-scroll/InfiniteScroll';
+import { StoreProviderList } from './pages/store-provider-list/StoreProviderList';
+import { LocalStateList } from './pages/local-state-list/LocalStateList';
 
 export const App: React.FC = () => {
   const path = usePath();
@@ -18,8 +19,13 @@ export const App: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href='/infinite-scroll'>
-                Infinite Scroll
+              <a href='/store-provider-list'>
+                Store Provider List
+              </a>
+            </li>
+            <li>
+              <a href="local-state-list">
+                Local State List
               </a>
             </li>
           </ul>
@@ -27,7 +33,8 @@ export const App: React.FC = () => {
       </aside>
       <main>
         {path === '/paginated-table' ? <PaginatedTable /> : null}
-        {path === '/infinite-scroll' ? <InfiniteScroll /> : null}
+        {path === '/store-provider-list' ? <StoreProviderList /> : null}
+        {path === '/local-state-list' ? <LocalStateList /> : null}
       </main>
     </div>
   )

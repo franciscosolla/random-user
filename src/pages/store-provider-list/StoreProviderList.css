@@ -1,0 +1,36 @@
+.content-container {
+  display: flex;
+  gap: 20px;
+}
+
+.list-container {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.list-item {
+  background-color: teal;
+  padding: 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+}
+
+.user-picture {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  width: 30px;
+}
+
+.user-name {
+  color: white;
+  font-weight: bold;
+  background-color: transparent;
+  border: 0;
+}

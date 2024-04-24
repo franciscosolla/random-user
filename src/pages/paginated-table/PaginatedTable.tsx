@@ -35,7 +35,7 @@ export const PaginatedTable: React.FC = () => {
       }).catch(console.error);
 
     return () => controller.abort();
-  }, [page, results]);
+  }, [page, results, seed]);
 
   if (!entries?.length) return null;
 
